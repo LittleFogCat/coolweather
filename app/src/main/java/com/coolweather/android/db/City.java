@@ -1,4 +1,4 @@
-package com.coolweather.android;
+package com.coolweather.android.db;
 
 /**
  * Created by jjy on 2017/2/15.

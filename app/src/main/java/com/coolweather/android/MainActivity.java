@@ -1,12 +1,14 @@
 package com.coolweather.android;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Adapter;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+
+import com.coolweather.android.db.Province;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,33 +29,53 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             if (response != null && response.isSuccessful()) {
-                data = response.body().string();
-                Log.e(TAG, "onResponse: "+data);
+                String data = response.body().string();
                 provinceList = HttpUtil.parseJsonWithJSONObject(data);
-                init();
+                if (provinceList != null && provinceList.size() > 0) {
+                    init();
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            provinceAdapter.add(new Province(99999, "出错了"));
+                        }
+                    });
+                }
             }
         }
     };
-    String data;
-    List<Province> provinceList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HttpUtil.getProvinceData(Constants.URL_PROVINCE_LIST, callback);
-
-
+        HttpUtil.getProvinceData(getResources().getString(R.string.url_list_province), callback);
     }
 
+    List<Province> provinceList;
+    ListView listView;
+    ArrayAdapter<Province> provinceAdapter;
+    Spinner spProvince, spCity;
+
     void init() {
-        final ListView listView = (ListView) findViewById(R.id.list_province);
-        final Adapter adapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, provinceList);
+        listView = (ListView) findViewById(R.id.list_province);
+        spProvince = (Spinner) findViewById(R.id.sp_province);
+        spCity = (Spinner) findViewById(R.id.sp_city);
+        spProvince.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                
+            }
+        });
+
+        provinceAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1);
+        provinceAdapter.addAll(provinceList);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                listView.setAdapter((ListAdapter) adapter);
+                spProvince.setAdapter(provinceAdapter);
             }
         });
     }

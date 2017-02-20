@@ -2,19 +2,18 @@ package com.coolweather.android;
 
 import android.util.Log;
 
+import com.coolweather.android.db.Province;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Created by jjy on 2017/2/15.
@@ -37,13 +36,12 @@ class HttpUtil {
                 JSONObject object = jsonArray.getJSONObject(i);
                 int id = object.getInt("id");
                 String name = object.getString("name");
-                Province province = new Province();
-                province.setId(id);
-                province.setProvinceName(name);
+                Province province = new Province(id, name);
                 provinceList.add(province);
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
         }
         Log.e(TAG, "parseJsonWithJSONObject: listsize = " + provinceList.size());
         return provinceList;
