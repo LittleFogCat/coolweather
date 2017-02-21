@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lfc.coolweather2">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
