@@ -1,6 +1,7 @@
 package com.coolweather.android;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -66,17 +67,11 @@ public class MainActivity extends AppCompatActivity {
         spProvince.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                
+
             }
         });
-
         provinceAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1);
         provinceAdapter.addAll(provinceList);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                spProvince.setAdapter(provinceAdapter);
-            }
-        });
+        spProvince.setAdapter(provinceAdapter);
     }
 }
