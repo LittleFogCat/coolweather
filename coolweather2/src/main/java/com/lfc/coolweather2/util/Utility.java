@@ -1,10 +1,14 @@
 package com.lfc.coolweather2.util;
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.lfc.coolweather2.db.City;
 import com.lfc.coolweather2.db.County;
 import com.lfc.coolweather2.db.Province;
+import com.lfc.coolweather2.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +38,7 @@ public class Utility {
         } else return false;
     }
 
-    public static boolean handleCityResponse(String response,int provinceId) {
+    public static boolean handleCityResponse(String response, int provinceId) {
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONArray allCity = new JSONArray(response);
@@ -74,4 +78,24 @@ public class Utility {
         } else return false;
     }
 
+    /**
+     * 传入json数据,返回实例化后的Weather对象
+     * @param responseData    传入的json数据
+     * @return 实例化后的Weather对象
+     */
+    public static Weather handleWeatherResponse(String responseData) {
+        try {
+            // 将整个json实例化保存在jsonObject中
+            JSONObject jsonObject = new JSONObject(responseData);
+            // 从jsonObject中取出键为"HeWeather"的数据,并保存在数组中
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            // 取出数组中的第一项,并以字符串形式保存
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            // 返回通过Gson解析后的Weather对象
+            return new Gson().fromJson(weatherContent, Weather.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
