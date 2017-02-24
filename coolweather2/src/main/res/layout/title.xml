@@ -3,12 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize">
 
+    <Button
+        android:id="@+id/btn_locate"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/ic_button_locate" />
+
     <TextView
         android:id="@+id/title_city"
-        android:text="加载中..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:text="加载中..."
         android:textColor="#eee"
         android:textSize="20sp" />
 

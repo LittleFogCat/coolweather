@@ -14,37 +14,51 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
-     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/weather_layout"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"
-            android:scrollbars="none">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <ScrollView
+                android:id="@+id/weather_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/shape_corner"
-                    android:orientation="vertical"
-                    android:padding="15dp">
+                    android:orientation="vertical">
 
-                    <include layout="@layout/title" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shape_corner"
+                        android:orientation="vertical"
+                        android:padding="15dp">
 
-                    <include layout="@layout/now" />
+                        <include layout="@layout/title" />
+
+                        <include layout="@layout/now" />
+                    </LinearLayout>
+
+                    <include layout="@layout/aqi" />
                 </LinearLayout>
+            </ScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-                <include layout="@layout/aqi" />
-            </LinearLayout>
-        </ScrollView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <fragment
+            android:id="@+id/frag_choose_area"
+            android:name="com.lfc.coolweather2.ChooseAreaFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            tools:layout="@layout/choose_area" />
+    </android.support.v4.widget.DrawerLayout>
 </FrameLayout>

@@ -1,10 +1,8 @@
 package com.lfc.coolweather2.util;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.lfc.coolweather2.db.City;
 import com.lfc.coolweather2.db.County;
 import com.lfc.coolweather2.db.Province;
@@ -80,7 +78,8 @@ public class Utility {
 
     /**
      * 传入json数据,返回实例化后的Weather对象
-     * @param responseData    传入的json数据
+     *
+     * @param responseData 传入的json数据
      * @return 实例化后的Weather对象
      */
     public static Weather handleWeatherResponse(String responseData) {

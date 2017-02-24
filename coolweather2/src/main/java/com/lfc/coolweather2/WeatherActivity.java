@@ -1,15 +1,16 @@
 package com.lfc.coolweather2;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -44,23 +45,24 @@ public class WeatherActivity extends AppCompatActivity {
     TextView txtTitleCity, titleUpdateTime, txtDegree, txtInfo, txtAqi, txtPm25;
     SwipeRefreshLayout swipeRefreshLayout;
     ImageView imgBing;
+    DrawerLayout drawerLayout;
+    Button btnLocate;
 
     void init() {
         weatherLayout = (ScrollView) findViewById(R.id.weather_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        btnLocate = (Button) findViewById(R.id.btn_locate);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         final String weatherData = sharedPreferences.getString("weather_data", null);
-        final String weatherId;
+        final String weatherId = sharedPreferences.getString("weather_id", null);
 
+        // onCreate
         if (weatherData != null) {
             Weather weather = Utility.handleWeatherResponse(weatherData);
-            if (weather != null) {
-                weatherId = weather.basic.weatherId;
-            } else weatherId = null;
             showWeatherInfo(weather);
         } else {
-            weatherId = getIntent().getStringExtra("weather_id");
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
         }
@@ -69,7 +71,14 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestWeather(weatherId);
+                requestWeather(sharedPreferences.getString("weather_id", null));
+            }
+        });
+
+        btnLocate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
         Log.d(TAG, "init: ");
@@ -83,23 +92,26 @@ public class WeatherActivity extends AppCompatActivity {
         txtInfo = (TextView) findViewById(R.id.txt_weather_info);
         txtAqi = (TextView) findViewById(R.id.txt_aqi);
         txtPm25 = (TextView) findViewById(R.id.txt_ap25);
-        imgBing= (ImageView) findViewById(R.id.img_bing);
+        imgBing = (ImageView) findViewById(R.id.img_bing);
 
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature;
         String info = weather.now.more.info;
-        String aqi = weather.aqi.city.aqi;
-        String pm25 = weather.aqi.city.pm25;
 
         txtTitleCity.setText(cityName);
         titleUpdateTime.setText(updateTime);
         txtDegree.setText(degree + "℃");
         txtInfo.setText(info);
-        txtAqi.setText(aqi);
-        txtPm25.setText(pm25);
-
-
+        if (weather.aqi != null) {
+            txtAqi.setText(weather.aqi.city.aqi);
+            txtPm25.setText(weather.aqi.city.pm25);
+        } else {
+            txtAqi.setText("暂无数据");
+            txtPm25.setText("暂无数据");
+            txtAqi.setSingleLine();
+            txtPm25.setSingleLine();
+        }
 
         weatherLayout.setVisibility(View.VISIBLE);
         Log.d(TAG, "showWeatherInfo");
@@ -149,5 +161,30 @@ public class WeatherActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    public void refresh(String weatherId) {
+        requestWeather(weatherId);
+        drawerLayout.closeDrawers();
+        swipeRefreshLayout.setRefreshing(true);
+
+    }
+
+    boolean isAlreadyPress = false;
+    long pressTime;
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+        } else {
+            if (isAlreadyPress && System.currentTimeMillis() - pressTime < 3000) {
+                finish();
+            } else {
+                Toast.makeText(WeatherActivity.this, "再按一下退出", Toast.LENGTH_SHORT).show();
+                pressTime = System.currentTimeMillis();
+                isAlreadyPress = true;
+            }
+        }
     }
 }
