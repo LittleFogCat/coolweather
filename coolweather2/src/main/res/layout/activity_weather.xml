@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    android:padding="10dp"
     tools:context="com.lfc.coolweather2.WeatherActivity">
 
     <ImageView
@@ -34,12 +33,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/layout_now"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
                         android:background="@drawable/shape_corner"
+                        android:fitsSystemWindows="true"
                         android:orientation="vertical"
                         android:padding="15dp">
 
@@ -49,6 +52,8 @@
                     </LinearLayout>
 
                     <include layout="@layout/aqi" />
+
+                    <include layout="@layout/forecast_layout" />
                 </LinearLayout>
             </ScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>

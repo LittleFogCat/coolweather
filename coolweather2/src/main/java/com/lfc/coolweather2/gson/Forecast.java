@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
  * Created by jjy on 2017/2/23.
  */
 
-public class Forcast {
-    String date;
+public class Forecast {
+    public String date;
 
     @SerializedName("cond")
     public More more;

@@ -3,7 +3,6 @@ package com.lfc.coolweather2;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 import com.lfc.coolweather2.db.City;
 import com.lfc.coolweather2.db.County;
 import com.lfc.coolweather2.db.Province;
-import com.lfc.coolweather2.gson.Weather;
 import com.lfc.coolweather2.util.HttpUtil;
 import com.lfc.coolweather2.util.Utility;
 
@@ -66,7 +64,7 @@ public class ChooseAreaFragment extends Fragment {
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         btnBack = (Button) view.findViewById(R.id.btn_back);
         listView = (ListView) view.findViewById(R.id.list_view);
-        adapter = new ArrayAdapter<>(getContext(), R.layout.simple_list_view, dataList);
+        adapter = new ArrayAdapter<>(getContext(), R.layout.simple_list_item, dataList);
         listView.setAdapter(adapter);
         listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorDivider)));
         listView.setDividerHeight(1);
@@ -134,7 +132,7 @@ public class ChooseAreaFragment extends Fragment {
      * 如果不存在则调用queryFromServer从网络查找
      */
     private void queryProvinces() {
-        txtTitle.setText("China");
+        txtTitle.setText("中国");
         btnBack.setVisibility(View.GONE);
         provinceList = DataSupport.findAll(Province.class);
         if (provinceList.size() > 0) {
@@ -157,13 +155,21 @@ public class ChooseAreaFragment extends Fragment {
         cityList = DataSupport.where("provinceid = ?", String.valueOf(selectedProvince.getId()))
                 .find(City.class);
         if (cityList.size() > 0) {
-            dataList.clear();
-            for (City c : cityList) {
-                dataList.add(c.getCityName());
+            try {
+                dataList.clear();
+                for (City c : cityList) {
+                    dataList.add(c.getCityName());
+                }
+                adapter.notifyDataSetChanged();
+                listView.setSelection(0);
+                currentLevel = LEVEL_CITY;
+            } catch (NullPointerException e) {
+                String url = getResources().getString(R.string.url_query_province);
+                queryFromServer(url, "province");
+                int provinceCode = selectedProvince.getProvinceCode();
+                url = getResources().getString(R.string.url_query_province) + provinceCode;
+                queryFromServer(url, "city");
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
-            currentLevel = LEVEL_CITY;
         } else {
             int provinceCode = selectedProvince.getProvinceCode();
             String url = getResources().getString(R.string.url_query_province) + provinceCode;
@@ -177,13 +183,23 @@ public class ChooseAreaFragment extends Fragment {
         countyList = DataSupport.where("cityid=?", String.valueOf(selectedCity.getId()))
                 .find(County.class);
         if (countyList.size() > 0) {
-            dataList.clear();
-            for (County c : countyList) {
-                dataList.add(c.getCountyName());
+            try {
+                dataList.clear();
+                for (County c : countyList) {
+                    dataList.add(c.getCountyName());
+                }
+                adapter.notifyDataSetChanged();
+                listView.setSelection(0);
+                currentLevel = LEVEL_COUNTY;
+            } catch (NullPointerException e) {
+                int provinceCode = selectedProvince.getProvinceCode();
+                String url = getResources().getString(R.string.url_query_province) + provinceCode;
+                queryFromServer(url, "city");
+                url = getResources().getString(R.string.url_query_province)
+                        + selectedProvince.getProvinceCode() + "/"
+                        + selectedCity.getCityCode();
+                queryFromServer(url, "county");
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
-            currentLevel = LEVEL_COUNTY;
         } else {
             String url = getResources().getString(R.string.url_query_province)
                     + selectedProvince.getProvinceCode() + "/"

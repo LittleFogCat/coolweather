@@ -8,8 +8,8 @@ android {
         applicationId "com.lfc.coolweather2"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "Optimized version by lfc"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 

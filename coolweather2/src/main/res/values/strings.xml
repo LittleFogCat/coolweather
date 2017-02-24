@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Cool Weather 2</string>
+    <string name="app_name">Cool Weather lfc</string>
     <string name="url_query_province">http://guolin.tech/api/china/</string>
 </resources>
