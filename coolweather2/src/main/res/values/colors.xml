@@ -6,4 +6,10 @@
     <color name="colorSimple">#abf</color>
     <color name="colorDivider">#8ae</color>
     <color name="white_gray">#eee</color>
+    <color name="a50">#a0ec</color>
+    <color name="a100">#a7e7</color>
+    <color name="a150">#abd2</color>
+    <color name="a200">#a662</color>
+    <color name="a300">#a634</color>
+    <color name="a300up">#a322</color>
 </resources>

@@ -52,7 +52,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     ScrollView weatherLayout;
-    TextView txtTitleCity, titleUpdateTime, txtDegree, txtInfo, txtAqi, txtPm25;
+    TextView txtTitleCity, titleUpdateTime, txtDegree, txtInfo, txtAqi, txtPm25, txtSport, txtComfort, txtCarWash;
     SwipeRefreshLayout swipeRefreshLayout;
     ImageView imgBing;
     DrawerLayout drawerLayout;
@@ -106,27 +106,30 @@ public class WeatherActivity extends AppCompatActivity {
         txtAqi = (TextView) findViewById(R.id.txt_aqi);
         txtPm25 = (TextView) findViewById(R.id.txt_ap25);
         imgBing = (ImageView) findViewById(R.id.img_bing);
+        txtComfort = (TextView) findViewById(R.id.txt_comfort);
+        txtSport = (TextView) findViewById(R.id.txt_sport);
+        txtCarWash = (TextView) findViewById(R.id.txt_carWash);
 
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature;
         String info = weather.now.more.info;
         String bingPic = pref.getString("bing_pic", null);
+        String sport = "运动指数: " + weather.suggestion.sport.info;
+        String comfort = "舒适度: " + weather.suggestion.comfort.info;
+        String carWash = "洗车指数: " + weather.suggestion.carWash.info;
         List<Forecast> forecastList = weather.forecastList;
 
         txtTitleCity.setText(cityName);
         titleUpdateTime.setText(updateTime);
         txtDegree.setText(degree + "℃");
         txtInfo.setText(info);
-        if (weather.aqi != null) {
-            txtAqi.setText(weather.aqi.city.aqi);
-            txtPm25.setText(weather.aqi.city.pm25);
-        } else {
-            txtAqi.setText("暂无数据");
-            txtPm25.setText("暂无数据");
-            txtAqi.setSingleLine();
-            txtPm25.setSingleLine();
-        }
+        txtComfort.setText(comfort);
+        txtSport.setText(sport);
+        txtCarWash.setText(carWash);
+
+        setAqiAndPm25(weather);
+
         if (bingPic != null) {
             Glide.with(this).load(bingPic).into(imgBing);
         } else {
@@ -244,6 +247,47 @@ public class WeatherActivity extends AppCompatActivity {
                 pressTime = System.currentTimeMillis();
                 isAlreadyPress = true;
             }
+        }
+    }
+
+    void setAqiAndPm25(Weather weather) {
+        if (weather.aqi != null) {
+            int aqi = 0, pm25 = 0;
+            try {
+                aqi = Integer.parseInt(weather.aqi.city.aqi);
+                pm25 = Integer.parseInt(weather.aqi.city.pm25);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            txtAqi.setText(weather.aqi.city.aqi);
+            txtPm25.setText(weather.aqi.city.pm25);
+            txtAqi.setTextSize(40);
+            txtPm25.setTextSize(40);
+
+            if (aqi == 0) txtAqi.setTextColor(Color.WHITE);
+            else if (aqi < 50) txtAqi.setTextColor(getResources().getColor(R.color.a50));
+            else if (aqi < 100) txtAqi.setTextColor(getResources().getColor(R.color.a100));
+            else if (aqi < 150) txtAqi.setTextColor(getResources().getColor(R.color.a150));
+            else if (aqi < 200) txtAqi.setTextColor(getResources().getColor(R.color.a200));
+            else if (aqi < 300) txtAqi.setTextColor(getResources().getColor(R.color.a300));
+            else if (aqi > 300) txtAqi.setTextColor(getResources().getColor(R.color.a300up));
+
+            if (pm25 == 0) txtPm25.setTextColor(Color.WHITE);
+            else if (pm25 < 35) txtPm25.setTextColor(getResources().getColor(R.color.a50));
+            else if (pm25 < 75) txtPm25.setTextColor(getResources().getColor(R.color.a100));
+            else if (pm25 < 115) txtPm25.setTextColor(getResources().getColor(R.color.a150));
+            else if (pm25 < 150) txtPm25.setTextColor(getResources().getColor(R.color.a200));
+            else if (pm25 < 250) txtPm25.setTextColor(getResources().getColor(R.color.a300));
+            else if (pm25 > 250) txtPm25.setTextColor(getResources().getColor(R.color.a300up));
+        } else {
+            txtAqi.setTextColor(Color.WHITE);
+            txtPm25.setTextColor(Color.WHITE);
+            txtAqi.setText("暂无数据");
+            txtPm25.setText("暂无数据");
+            txtAqi.setTextSize(25);
+            txtPm25.setTextSize(25);
+            txtAqi.setSingleLine();
+            txtPm25.setSingleLine();
         }
     }
 }
