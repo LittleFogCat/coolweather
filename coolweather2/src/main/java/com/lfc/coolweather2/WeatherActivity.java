@@ -70,14 +70,26 @@ public class WeatherActivity extends AppCompatActivity {
         final String weatherData = sharedPreferences.getString("weather_data", null);
         final String weatherId = sharedPreferences.getString("weather_id", null);
 
-        // onCreate
+        /**
+         * 启动时首先判断缓存是否有天气数据：
+         * 如果没有，则请求服务器数据；
+         * 如果有的话，则判断数据距离现在时间：
+         *     若超过8小时，则请求服务器数据；
+         *     若不超过8小时，则取出缓存数据。
+         */
         if (weatherData != null) {
             Weather weather = Utility.handleWeatherResponse(weatherData);
-            showWeatherInfo(weather);
+            long currentMillis = System.currentTimeMillis();
+            if (currentMillis - sharedPreferences.getLong("last_request", 0) > 28800000) {
+                requestWeather(weatherId);
+            } else {
+                showWeatherInfo(weather);
+            }
         } else {
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
         }
+
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -93,7 +105,6 @@ public class WeatherActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        Log.d(TAG, "init: ");
     }
 
     @SuppressLint("SetTextI18n")
@@ -183,17 +194,18 @@ public class WeatherActivity extends AppCompatActivity {
                             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("weather_data", responseData);
+                            editor.putLong("last_request", System.currentTimeMillis());
                             editor.apply();
+
                             showWeatherInfo(weather);
-                            Log.e(TAG, "on response");
+                            Date date = new Date();
+                            SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
+                            String time = sdf.format(date);
+                            Toast.makeText(WeatherActivity.this, time + "刷新成功", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }
                         swipeRefreshLayout.setRefreshing(false);
-                        Date date = new Date();
-                        SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
-                        String time = sdf.format(date);
-                        Toast.makeText(WeatherActivity.this, time + "刷新成功", Toast.LENGTH_LONG).show();
                     }
                 });
             }

@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Cool Weather lfc</string>
     <string name="url_query_province">http://guolin.tech/api/china/</string>
+    <string name="intro">
+        Cool Weather lfc是基于Android平台开源软件酷欧天气开发的一款天气查询软件。酷欧天气具有查询全国任意城市天气、自由切换城市、自动更新天气等功能。
+        本软件对酷欧天气做了如下优化：
+        1. 优化了部分代码逻辑，增强稳定性；
+        2. 增加了空气质量指数的分级，并以颜色进行划分；
+        3. 优化了自动更新的逻辑，减少电量和流量消耗且更灵活；
+        4. 界面调整和其他优化。
+        本软件天气数据由和风天气提供，背景图片由必应提供。代码遵循Apache v2 License开源协议。本软件主要作为学习和交流使用。
+    </string>
+    <string name="intro_simp">
+        本软件是一款免费开源的天气查询软件。
+    </string>
 </resources>
